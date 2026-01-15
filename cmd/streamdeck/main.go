@@ -13,7 +13,6 @@ import (
 	"github.com/Luzifer/streamdeck"
 	"github.com/fsnotify/fsnotify"
 	"github.com/pkg/errors"
-	"github.com/sashko/go-uinput"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -37,8 +36,6 @@ var (
 	pageStack           []string
 
 	sd *streamdeck.Client
-
-	kbd uinput.Keyboard
 
 	version = "dev"
 )
@@ -74,13 +71,6 @@ func main() {
 	if err != nil {
 		log.WithError(err).Fatal("Unable to select StreamDeck to use")
 	}
-
-	// Initalize control devices
-	kbd, err = uinput.CreateKeyboard()
-	if err != nil {
-		log.WithError(err).Fatal("Unable to create uinput keyboard")
-	}
-	defer kbd.Close()
 
 	// Initialize device
 	sd, err = streamdeck.New(deck)
