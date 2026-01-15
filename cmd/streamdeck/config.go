@@ -135,7 +135,7 @@ func loadConfig() error {
 		tempConf = newConfig()
 	)
 
-	decoder.SetStrict(true)
+	decoder.SetStrict(false)
 	if err = decoder.Decode(&tempConf); err != nil {
 		return errors.Wrap(err, "Unable to parse config")
 	}
