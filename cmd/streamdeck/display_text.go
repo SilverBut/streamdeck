@@ -6,8 +6,10 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"strings"
+	"time"
 
 	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -89,4 +91,53 @@ func (d displayElementText) Display(ctx context.Context, idx int, attributes att
 	return errors.Wrap(sd.FillImage(idx, imgRenderer.GetImage()), "Unable to set image")
 }
 
-func (d displayElementText) NeedsLoop(attributes attributeCollection) bool { return false }
+func (d displayElementText) NeedsLoop(attributes attributeCollection) bool {
+	if attributes.BackgroundColor == nil {
+		return false
+	}
+
+	if attributes.Interval > 0 && attributes.Interval < 100*time.Millisecond {
+		log.WithFields(log.Fields{
+			"type":     "text",
+			"interval": attributes.Interval,
+		}).Warn("Ignoring interval below 100ms")
+		return false
+	}
+
+	return attributes.Interval >= 100*time.Millisecond
+}
+
+func (d *displayElementText) StartLoopDisplay(ctx context.Context, idx int, attributes attributeCollection) error {
+	d.running = true
+
+	withBg := attributes
+	withoutBg := attributes
+	withoutBg.BackgroundColor = nil
+
+	go func() {
+		showBackground := true
+		for tick := time.NewTicker(attributes.Interval); ; <-tick.C {
+			if ctx.Err() != nil || !d.running {
+				return
+			}
+
+			renderAttrs := withBg
+			if !showBackground {
+				renderAttrs = withoutBg
+			}
+
+			if err := d.Display(ctx, idx, renderAttrs); err != nil {
+				log.WithError(err).Error("Unable to refresh element")
+			}
+
+			showBackground = !showBackground
+		}
+	}()
+
+	return nil
+}
+
+func (d *displayElementText) StopLoopDisplay() error {
+	d.running = false
+	return nil
+}
