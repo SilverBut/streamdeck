@@ -105,7 +105,7 @@ type keyDefinition struct {
 
 type dynamicElement struct {
 	Type       string              `json:"type" yaml:"type"`
-	LongPress  bool                `json:"long_press" yaml:"long_press"`
+	LongPress  *bool               `json:"long_press,omitempty" yaml:"long_press,omitempty"`
 	Attributes attributeCollection `json:"attributes" yaml:"attributes"`
 }
 

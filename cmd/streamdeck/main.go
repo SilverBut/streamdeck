@@ -255,8 +255,8 @@ func triggerAction(kd keyDefinition, isLongPress bool) error {
 			continue
 		}
 
-		if isLongPress != a.LongPress {
-			// press duration does not match requirement
+		if a.LongPress != nil && isLongPress != *a.LongPress {
+			// press duration does not match explicit requirement
 			continue
 		}
 
