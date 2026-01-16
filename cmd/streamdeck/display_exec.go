@@ -8,7 +8,6 @@ import (
 	_ "image/jpeg"
 	_ "image/png"
 	"os"
-	"os/exec"
 	"strings"
 	"time"
 
@@ -32,7 +31,7 @@ func (d displayElementExec) Display(ctx context.Context, idx int, attributes att
 	)
 
 	// Initialize command
-	if attributes.Command == nil {
+	if attributes.Command.IsEmpty() {
 		return errors.New("No command supplied")
 	}
 
@@ -45,7 +44,11 @@ func (d displayElementExec) Display(ctx context.Context, idx int, attributes att
 		processEnv[k] = v
 	}
 
-	command := exec.Command(attributes.Command[0], attributes.Command[1:]...)
+	command, err := attributes.Command.Build()
+	if err != nil {
+		return err
+	}
+
 	command.Env = env.MapToList(processEnv)
 	command.Stdout = buf
 

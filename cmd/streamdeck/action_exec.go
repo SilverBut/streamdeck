@@ -2,7 +2,6 @@ package main
 
 import (
 	"os"
-	"os/exec"
 
 	"github.com/Luzifer/go_helpers/v2/env"
 	"github.com/pkg/errors"
@@ -15,7 +14,7 @@ func init() {
 type actionExec struct{}
 
 func (actionExec) Execute(attributes attributeCollection) error {
-	if attributes.Command == nil {
+	if attributes.Command.IsEmpty() {
 		return errors.New("No command supplied")
 	}
 
@@ -25,7 +24,11 @@ func (actionExec) Execute(attributes attributeCollection) error {
 		processEnv[k] = v
 	}
 
-	command := exec.Command(attributes.Command[0], attributes.Command[1:]...)
+	command, err := attributes.Command.Build()
+	if err != nil {
+		return err
+	}
+
 	command.Env = env.MapToList(processEnv)
 
 	if attributes.AttachStdout {

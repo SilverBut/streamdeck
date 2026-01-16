@@ -25,7 +25,7 @@ type attributeCollection struct {
 	Caption         string            `json:"caption,omitempty" yaml:"caption,omitempty"`
 	ChangeVolume    *float64          `json:"change_volume,omitempty" yaml:"change_volume,omitempty"`
 	Color           string            `json:"color,omitempty" yaml:"color,omitempty"`
-	Command         []string          `json:"command,omitempty" yaml:"command,omitempty"`
+	Command         commandValue      `json:"command,omitempty" yaml:"command,omitempty"`
 	Delay           time.Duration     `json:"delay,omitempty" yaml:"delay,omitempty"`
 	Device          string            `json:"device,omitempty" yaml:"device,omitempty"`
 	Env             map[string]string `json:"env,omitempty" yaml:"env,omitempty"`
