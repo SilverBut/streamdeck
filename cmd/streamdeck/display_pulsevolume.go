@@ -1,3 +1,4 @@
+//go:build linux
 // +build linux
 
 package main
@@ -101,7 +102,11 @@ func (d displayElementPulseVolume) Display(ctx context.Context, idx int, attribu
 	}
 
 	if strings.TrimSpace(attributes.Caption) != "" {
-		if err = img.DrawCaptionText(strings.TrimSpace(attributes.Caption)); err != nil {
+		caption := strings.TrimSpace(attributes.Caption)
+		if attributes.CaptionWithoutTrim {
+			caption = attributes.Caption
+		}
+		if err = img.DrawCaptionText(caption); err != nil {
 			return errors.Wrap(err, "Unable to render caption")
 		}
 	}

@@ -68,13 +68,21 @@ func (d displayElementText) Display(ctx context.Context, idx int, attributes att
 	}
 
 	if strings.TrimSpace(attributes.Text) != "" {
-		if err = imgRenderer.DrawBigText(strings.TrimSpace(attributes.Text), fontsize, border, textColor); err != nil {
+		text := strings.TrimSpace(attributes.Text)
+		if attributes.TextWithoutTrim {
+			text = attributes.Text
+		}
+		if err = imgRenderer.DrawBigText(text, fontsize, border, textColor); err != nil {
 			return errors.Wrap(err, "Unable to render text")
 		}
 	}
 
 	if strings.TrimSpace(attributes.Caption) != "" {
-		if err = imgRenderer.DrawCaptionText(strings.TrimSpace(attributes.Caption)); err != nil {
+		caption := strings.TrimSpace(attributes.Caption)
+		if attributes.CaptionWithoutTrim {
+			caption = attributes.Caption
+		}
+		if err = imgRenderer.DrawCaptionText(caption); err != nil {
 			return errors.Wrap(err, "Unable to render caption")
 		}
 	}

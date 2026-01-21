@@ -65,7 +65,11 @@ func (d displayElementImage) Display(ctx context.Context, idx int, attributes at
 	}
 
 	if strings.TrimSpace(attributes.Caption) != "" {
-		if err = imgRenderer.DrawCaptionText(strings.TrimSpace(attributes.Caption)); err != nil {
+		caption := strings.TrimSpace(attributes.Caption)
+		if attributes.CaptionWithoutTrim {
+			caption = attributes.Caption
+		}
+		if err = imgRenderer.DrawCaptionText(caption); err != nil {
 			return errors.Wrap(err, "rendering caption")
 		}
 	}
